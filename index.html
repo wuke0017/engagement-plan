@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#a9232f">
+  <meta name="description" content="2026年11月底订婚宴的任务、预算、决定与待确认事项总览">
+  <title>订婚宴总控台</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23a9232f'/%3E%3Cpath d='M17 33l10 10 20-23' fill='none' stroke='%23f8d985' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --red: #a9232f;
+      --red-dark: #741722;
+      --red-soft: #f8e8e9;
+      --gold: #b7771f;
+      --gold-soft: #fff2cf;
+      --ink: #261f1e;
+      --muted: #706664;
+      --line: #e7dedb;
+      --paper: #fffdfb;
+      --page: #f5f1ee;
+      --green: #246b4a;
+      --green-soft: #e7f4ec;
+      --amber: #91530f;
+      --amber-soft: #fff0d8;
+      --shadow: 0 16px 42px rgba(67, 36, 31, .09);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 4% 0%, rgba(169, 35, 47, .08), transparent 34rem),
+        var(--page);
+      font-family: "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; }
+
+    .shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(16px);
+      background: rgba(255, 253, 251, .9);
+      border-bottom: 1px solid rgba(231, 222, 219, .85);
+    }
+    .topbar-inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; }
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      color: #fff7e6;
+      background: var(--red);
+      box-shadow: 0 7px 16px rgba(169, 35, 47, .22);
+    }
+    .updated { color: var(--muted); font-size: .86rem; white-space: nowrap; }
+
+    .hero { padding: 34px 0 20px; }
+    .hero-grid { display: grid; grid-template-columns: 1.4fr .8fr; gap: 18px; }
+    .hero-main, .countdown {
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .hero-main {
+      position: relative;
+      padding: 30px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--red-dark), var(--red) 62%, #bf4750);
+    }
+    .hero-main::after {
+      content: "囍";
+      position: absolute;
+      right: 18px;
+      bottom: -40px;
+      color: rgba(255, 238, 192, .12);
+      font-family: serif;
+      font-size: 12rem;
+      line-height: 1;
+    }
+    .eyebrow { margin: 0 0 8px; color: #f8d985; font-weight: 700; letter-spacing: .12em; }
+    h1 { position: relative; z-index: 1; margin: 0; font-size: clamp(2rem, 4.4vw, 3.5rem); line-height: 1.18; }
+    .hero-copy { position: relative; z-index: 1; max-width: 42rem; margin: 14px 0 0; color: rgba(255,255,255,.86); }
+    .hero-tags { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px; }
+    .hero-tag { padding: 7px 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; background: rgba(255,255,255,.1); font-size: .9rem; }
+
+    .countdown { padding: 26px; background: linear-gradient(145deg, #fffdfb, #fff7e4); border: 1px solid #f3dfb0; }
+    .countdown small { color: var(--gold); font-weight: 800; letter-spacing: .08em; }
+    .countdown strong { display: block; margin: 4px 0; color: var(--red-dark); font-family: Georgia, serif; font-size: clamp(2.2rem, 7vw, 4.4rem); line-height: 1; }
+    .countdown p { margin: 12px 0 0; color: var(--muted); }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 4px 0 26px; }
+    .stat { padding: 19px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); }
+    .stat-label { color: var(--muted); font-size: .87rem; }
+    .stat-value { margin-top: 4px; font-size: 1.45rem; font-weight: 850; line-height: 1.3; }
+    .stat-note { margin-top: 4px; color: var(--muted); font-size: .8rem; }
+
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 22px; align-items: start; padding-bottom: 72px; }
+    main { min-width: 0; }
+    aside { position: sticky; top: 84px; }
+    .card { margin-bottom: 18px; padding: 24px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 8px 22px rgba(67,36,31,.04); }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 18px; }
+    h2 { margin: 0; font-size: 1.38rem; line-height: 1.3; }
+    .section-note { margin: 4px 0 0; color: var(--muted); font-size: .9rem; }
+
+    .priority-list { display: grid; gap: 11px; }
+    .task {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 13px;
+      align-items: start;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fff;
+    }
+    .task-badge, .chip { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; font-weight: 800; white-space: nowrap; }
+    .task-badge { min-width: 41px; padding: 4px 8px; font-size: .78rem; color: var(--red-dark); background: var(--red-soft); }
+    .task h3 { margin: 0; font-size: 1rem; }
+    .task p { margin: 5px 0 0; color: var(--muted); font-size: .9rem; }
+    .due { color: var(--red-dark); font-size: .84rem; font-weight: 750; text-align: right; }
+
+    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .filter-btn { padding: 8px 13px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: #fff; font: inherit; font-size: .88rem; cursor: pointer; }
+    .filter-btn[aria-pressed="true"] { color: #fff; border-color: var(--red); background: var(--red); }
+
+    .task-table { display: grid; gap: 10px; }
+    .task-row { display: grid; grid-template-columns: 72px minmax(120px, .85fr) minmax(180px, 1.4fr) 92px; gap: 12px; align-items: center; padding: 14px 15px; border: 1px solid var(--line); border-radius: 14px; }
+    .task-row[hidden] { display: none; }
+    .task-title { font-weight: 760; }
+    .task-action { color: var(--muted); font-size: .87rem; }
+    .owner { color: var(--muted); font-size: .83rem; text-align: right; }
+    .chip { width: max-content; padding: 4px 9px; font-size: .76rem; }
+    .chip-p0 { color: var(--red-dark); background: var(--red-soft); }
+    .chip-p1 { color: var(--amber); background: var(--amber-soft); }
+    .chip-p2 { color: #385d7c; background: #e7f1f8; }
+    .chip-done { color: var(--green); background: var(--green-soft); }
+    .chip-pending { color: var(--amber); background: var(--amber-soft); }
+
+    .money-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .money-item { padding: 16px; border: 1px solid var(--line); border-radius: 14px; }
+    .money-top { display: flex; justify-content: space-between; gap: 12px; }
+    .money-name { font-weight: 760; }
+    .money-value { color: var(--red-dark); font-weight: 850; }
+    .money-item p { margin: 8px 0 0; color: var(--muted); font-size: .86rem; }
+    .budget-warning { margin-top: 14px; padding: 14px 16px; border-left: 4px solid var(--gold); border-radius: 10px; background: var(--gold-soft); color: #62410c; font-size: .9rem; }
+
+    .decision-list, .question-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+    .decision-list li, .question-list li { position: relative; padding: 13px 14px 13px 43px; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
+    .decision-list li::before, .question-list li::before { position: absolute; left: 14px; top: 13px; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; font-weight: 900; line-height: 1; }
+    .decision-list li::before { content: "✓"; color: var(--green); background: var(--green-soft); }
+    .question-list li::before { content: "?"; color: var(--amber); background: var(--amber-soft); }
+    .decision-list strong { display: block; }
+    .decision-list span { color: var(--muted); font-size: .88rem; }
+
+    .side-nav { padding: 14px; }
+    .side-nav a { display: block; padding: 10px 12px; border-radius: 10px; text-decoration: none; color: var(--muted); font-weight: 650; }
+    .side-nav a:hover, .side-nav a:focus-visible { color: var(--red-dark); background: var(--red-soft); outline: none; }
+    .aside-title { margin: 3px 10px 8px; color: var(--ink); font-size: .86rem; font-weight: 850; }
+    .next-step { padding: 20px; color: #fff; background: var(--red-dark); }
+    .next-step h2 { font-size: 1.1rem; }
+    .next-step p { margin: 9px 0 0; color: rgba(255,255,255,.76); font-size: .9rem; }
+
+    body.locked { overflow: hidden; }
+    .access-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background:
+        radial-gradient(circle at 10% 5%, rgba(248, 217, 133, .18), transparent 28rem),
+        linear-gradient(145deg, var(--red-dark), #3e1118);
+    }
+    .access-gate[hidden] { display: none; }
+    .gate-card {
+      width: min(100%, 420px);
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 24px;
+      color: #fff;
+      background: rgba(255,255,255,.1);
+      box-shadow: 0 24px 70px rgba(30, 3, 8, .3);
+      backdrop-filter: blur(18px);
+    }
+    .gate-mark { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; color: var(--red-dark); background: #f8d985; font-family: serif; font-size: 1.5rem; font-weight: 900; }
+    .gate-card h1 { margin: 20px 0 7px; font-size: 1.8rem; }
+    .gate-card p { margin: 0 0 22px; color: rgba(255,255,255,.76); }
+    .gate-card label { display: block; margin-bottom: 7px; font-size: .9rem; font-weight: 750; }
+    .gate-row { display: grid; grid-template-columns: 1fr auto; gap: 9px; }
+    .gate-row input {
+      min-width: 0;
+      padding: 12px 13px;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 11px;
+      color: var(--ink);
+      background: #fff;
+      font: inherit;
+      outline: none;
+    }
+    .gate-row input:focus { border-color: #f8d985; box-shadow: 0 0 0 3px rgba(248,217,133,.22); }
+    .gate-row button { padding: 12px 17px; border: 0; border-radius: 11px; color: var(--red-dark); background: #f8d985; font: inherit; font-weight: 850; cursor: pointer; }
+    .gate-error { min-height: 1.5em; margin: 9px 0 0 !important; color: #ffd5d8 !important; font-size: .88rem; }
+
+    footer { padding: 24px 0 44px; color: var(--muted); text-align: center; font-size: .84rem; }
+    section { scroll-margin-top: 84px; }
+
+    @media (max-width: 900px) {
+      .hero-grid, .layout { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      aside { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; order: -1; }
+      .side-nav { display: none; }
+      .next-step { margin-bottom: 0; }
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 20px, 1180px); }
+      .topbar-inner { min-height: 58px; }
+      .brand-mark { width: 31px; height: 31px; }
+      .updated { display: none; }
+      .hero { padding-top: 18px; }
+      .hero-main { padding: 24px 20px; border-radius: 20px; }
+      .hero-main::after { right: 4px; font-size: 9rem; }
+      .countdown { padding: 20px; border-radius: 20px; }
+      .stats { gap: 9px; }
+      .stat { padding: 14px; border-radius: 14px; }
+      .stat-value { font-size: 1.18rem; }
+      .card { padding: 18px 14px; border-radius: 16px; }
+      .task { grid-template-columns: auto 1fr; }
+      .due { grid-column: 2; text-align: left; }
+      .task-row { grid-template-columns: 58px 1fr; gap: 7px 10px; }
+      .task-action, .owner { grid-column: 2; text-align: left; }
+      .money-grid { grid-template-columns: 1fr; }
+      aside { display: block; }
+      .next-step { margin-bottom: 18px; }
+    }
+  </style>
+</head>
+<body class="locked">
+  <section class="access-gate" id="access-gate" aria-labelledby="gate-title">
+    <form class="gate-card" id="access-form">
+      <div class="gate-mark">囍</div>
+      <h1 id="gate-title">订婚宴总控台</h1>
+      <p>请输入阅览密码后查看计划与预算。</p>
+      <label for="access-password">阅览密码</label>
+      <div class="gate-row">
+        <input id="access-password" name="password" type="password" autocomplete="current-password" required autofocus>
+        <button type="submit">进入</button>
+      </div>
+      <p class="gate-error" id="access-error" role="alert" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <div id="protected-content" hidden>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand"><span class="brand-mark">囍</span><span>订婚宴总控台</span></div>
+      <span class="updated">资料更新于 2026-09-30</span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-grid">
+        <div class="hero-main">
+          <p class="eyebrow">2026 · 福建宁德寿宁 · 寿宁廊桥酒店</p>
+          <h1 id="page-title">把订婚宴，一件件稳稳办好</h1>
+          <p class="hero-copy">先锁定日期、酒店、礼金与五金，再推进人员、住宿、服饰和现场物料。所有不确定事项单独标记，不混入已确认决定。</p>
+          <div class="hero-tags"><span class="hero-tag">11 月底</span><span class="hero-tag">寿宁廊桥酒店</span><span class="hero-tag">约 10 桌</span><span class="hero-tag">男方提前 2 天到达</span></div>
+        </div>
+        <div class="countdown">
+          <small>当前阶段</small>
+          <strong>锁定关键项</strong>
+          <p>准确日期仍待确认，因此暂不显示倒计时。先完成 5 项 P0 决策，后续安排才不会反复改动。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="项目概览">
+      <div class="stat"><div class="stat-label">当前计划预算</div><div class="stat-value">约 37.1–38.1 万</div><div class="stat-note">已按五金总预算 7–8 万计入</div></div>
+      <div class="stat"><div class="stat-label">最高优先级</div><div class="stat-value">5 项 P0</div><div class="stat-note">日期、礼金、酒店、五金、人员</div></div>
+      <div class="stat"><div class="stat-label">宴席规模</div><div class="stat-value">约 10 桌</div><div class="stat-note">每桌菜约 2,000 元</div></div>
+      <div class="stat"><div class="stat-label">男方人员</div><div class="stat-value">约 5–6 人</div><div class="stat-note">含 1 位媒人人选</div></div>
+    </section>
+
+    <div class="layout">
+      <main>
+        <section class="card" id="priority">
+          <div class="section-head"><div><h2>现在最先处理</h2><p class="section-note">这些决定会影响后面的所有预订和采购</p></div></div>
+          <div class="priority-list">
+            <article class="task"><span class="task-badge">P0</span><div><h3>确认日期、时段和酒店预订状态</h3><p>地点按寿宁廊桥酒店记录；确认厅名、准确地址及是否已订。</p></div><span class="due">10 月 3 日前</span></article>
+            <article class="task"><span class="task-badge">P0</span><div><h3>完成 22.8 万礼金交付准备</h3><p>我交 2.8 万现金红包给女方；核对指定卡信息，将剩余 20 万元打入该卡。</p></div><span class="due">10 月 3 日前</span></article>
+            <article class="task"><span class="task-badge">P0</span><div><h3>与寿宁廊桥酒店锁定宴席</h3><p>确认厅名、桌数、备桌、菜单、酒水、服务费、定金与尾款。</p></div><span class="due">10 月 5 日前</span></article>
+            <article class="task"><span class="task-badge">P0</span><div><h3>确定五金其余部分款式</h3><p>耳环已购买 7,000 元；其余部分确定另买，五金总预算 7 万–8 万元。</p></div><span class="due">10 月 5 日前</span></article>
+            <article class="task"><span class="task-badge">P0</span><div><h3>确定男方出席名单</h3><p>落实 5–6 人具体姓名，并确定 1 位媒人人选。</p></div><span class="due">10 月 7 日前</span></article>
+          </div>
+        </section>
+
+        <section class="card" id="tasks">
+          <div class="section-head"><div><h2>完整待办</h2><p class="section-note">按优先级筛选，快速查看接下来要做什么</p></div></div>
+          <div class="filter-bar" role="group" aria-label="待办优先级筛选">
+            <button class="filter-btn" type="button" data-filter="all" aria-pressed="true">全部 18 项</button>
+            <button class="filter-btn" type="button" data-filter="P0" aria-pressed="false">P0 紧急</button>
+            <button class="filter-btn" type="button" data-filter="P1" aria-pressed="false">P1 近期</button>
+            <button class="filter-btn" type="button" data-filter="P2" aria-pressed="false">P2 临近宴会</button>
+          </div>
+          <div class="task-table">
+            <div class="task-row" data-priority="P0"><span class="chip chip-p0">P0 · 10/3</span><div class="task-title">确认日期、时段和酒店预订状态</div><div class="task-action">寿宁廊桥酒店：确认厅名、准确地址及是否已订</div><div class="owner">负责人待定</div></div>
+            <div class="task-row" data-priority="P0"><span class="chip chip-p0">P0 · 10/3</span><div class="task-title">完成 22.8 万礼金交付准备</div><div class="task-action">我交 2.8 万现金红包给女方；剩余 20 万元打入指定卡</div><div class="owner">我</div></div>
+            <div class="task-row" data-priority="P0"><span class="chip chip-p0">P0 · 10/5</span><div class="task-title">与寿宁廊桥酒店锁定宴席</div><div class="task-action">核实厅名、桌数、菜单、酒水、费用和付款节点</div><div class="owner">负责人待定</div></div>
+            <div class="task-row" data-priority="P0"><span class="chip chip-p0">P0 · 10/5</span><div class="task-title">确认五金其余部分款式</div><div class="task-action">耳环已购 7,000 元；其余部分另买，总预算 7 万–8 万元</div><div class="owner">新人</div></div>
+            <div class="task-row" data-priority="P0"><span class="chip chip-p0">P0 · 10/7</span><div class="task-title">确认男方出席名单</div><div class="task-action">确定 5–6 人姓名及媒人人选</div><div class="owner">男方</div></div>
+            <div class="task-row" data-priority="P1"><span class="chip chip-p1">P1 · 10/10</span><div class="task-title">预订住宿与交通</div><div class="task-action">按提前两天到达倒推入住和车次/航班</div><div class="owner">男方</div></div>
+            <div class="task-row" data-priority="P1"><span class="chip chip-p1">P1 · 10/15</span><div class="task-title">完成服饰与五金采购</div><div class="task-action">女方、女方母亲、男方服装，男方戒指与五金分别验收</div><div class="owner">新人/双方家庭</div></div>
+            <div class="task-row" data-priority="P1"><span class="chip chip-p1">P1 · 10/15</span><div class="task-title">确认化妆服务</div><div class="task-action">核对档期、套餐、试妆、交通与取消条款</div><div class="owner">负责人待定</div></div>
+            <div class="task-row" data-priority="P1"><span class="chip chip-p1">P1 · 10/20</span><div class="task-title">完成电子订婚请帖</div><div class="task-action">确认文案、照片、时间地点、发送人和名单</div><div class="owner">新人</div></div>
+            <div class="task-row" data-priority="P1"><span class="chip chip-p1">P1 · 10/20</span><div class="task-title">列出红包与现金准备表</div><div class="task-action">记录金额、对象、封装人、保管人和交付人</div><div class="owner">负责人待定</div></div>
+            <div class="task-row" data-priority="P1"><span class="chip chip-p1">P1 · 10/25</span><div class="task-title">明确当天流程</div><div class="task-action">到达、迎接、介绍、交礼、敬酒、合影和离场</div><div class="owner">双方总协调人</div></div>
+            <div class="task-row" data-priority="P1"><span class="chip chip-p1">P1 · 11/10</span><div class="task-title">采购喜糖</div><div class="task-action">按到场人数每人 1 份，额外预留约 5%–10%</div><div class="owner">负责人待定</div></div>
+            <div class="task-row" data-priority="P2"><span class="chip chip-p2">P2 · 11/10</span><div class="task-title">最终确认桌数及宾客</div><div class="task-action">建立名单，确认儿童、忌口和备桌</div><div class="owner">女方主导</div></div>
+            <div class="task-row" data-priority="P2"><span class="chip chip-p2">P2 · 宴前7天</span><div class="task-title">完成供应商复核</div><div class="task-action">复核酒店、化妆、摄影等时间、地址和尾款</div><div class="owner">总协调人</div></div>
+            <div class="task-row" data-priority="P2"><span class="chip chip-p2">P2 · 宴前3天</span><div class="task-title">清点物品和资金</div><div class="task-action">逐项装袋，现金双人复核并分开保管</div><div class="owner">新人+1位家人</div></div>
+            <div class="task-row" data-priority="P2"><span class="chip chip-p2">P2 · 宴前2天</span><div class="task-title">男方到寿宁</div><div class="task-action">入住、现场对接并复核后续安排</div><div class="owner">男方</div></div>
+            <div class="task-row" data-priority="P2"><span class="chip chip-p2">P2 · 宴前1天</span><div class="task-title">分装并交接喜糖</div><div class="task-action">按桌或区域分装，指定现场发放人</div><div class="owner">负责人待定</div></div>
+            <div class="task-row" data-priority="P2"><span class="chip chip-p2">P2 · 用餐时</span><div class="task-title">现场发放喜糖</div><div class="task-action">按到场人数每人 1 份</div><div class="owner">发放人待定</div></div>
+          </div>
+        </section>
+
+        <section class="card" id="budget">
+          <div class="section-head"><div><h2>款项与预算</h2><p class="section-note">五金按总预算 7 万–8 万元计入；当前计划约 371,000–381,000 元</p></div></div>
+          <div class="money-grid">
+            <article class="money-item"><div class="money-top"><span class="money-name">礼金总额</span><span class="money-value">¥228,000</span></div><p>我交 2.8 万元现金红包给女方；剩余 20 万元打入指定卡。</p></article>
+            <article class="money-item"><div class="money-top"><span class="money-name">礼金内现金红包</span><span class="money-value">¥28,000</span></div><p>已包含在 22.8 万礼金内，不重复计入总预算；由我负责交给女方。</p></article>
+            <article class="money-item"><div class="money-top"><span class="money-name">五金</span><span class="money-value">预算 ¥70,000–80,000</span></div><p>耳环已购买 7,000 元；其余部分确定另买，耳环包含在总预算内。</p></article>
+            <article class="money-item"><div class="money-top"><span class="money-name">宴席及相关</span><span class="money-value">约 ¥30,000</span></div><p>约 10 桌；待确认额外 1 万元包含哪些费用。</p></article>
+            <article class="money-item"><div class="money-top"><span class="money-name">女方母亲衣服红包</span><span class="money-value">¥20,000</span></div><p>该红包就是衣服费用，不再另算女方母亲衣服款。</p></article>
+            <article class="money-item"><div class="money-top"><span class="money-name">礼担子</span><span class="money-value">¥10,000</span></div><p>男方只准备 1 万元；担子具体内容由女方家庭准备。</p></article>
+            <article class="money-item"><div class="money-top"><span class="money-name">女方长辈红包</span><span class="money-value">¥10,000</span></div><p>人数已定为 10 位，每位准备 1,000 元现金红包。</p></article>
+            <article class="money-item"><div class="money-top"><span class="money-name">化妆</span><span class="money-value">约 ¥3,000</span></div><p>待确认服务对象、试妆、交通和跟妆。</p></article>
+          </div>
+          <div class="budget-warning">当前计划金额约 37.1 万–38.1 万，包括 22.8 万礼金、3 万宴席、2 万女方母亲衣服红包、1 万礼担子、1 万长辈红包、0.3 万化妆和 7 万–8 万五金。五金预算已包含 7,000 元耳环；仍未计入住宿交通、双方服装、男方戒指、酒水和喜糖等。</div>
+        </section>
+
+        <section class="card" id="decisions">
+          <div class="section-head"><div><h2>已经确定</h2><p class="section-note">后续按这些口径执行，除非双方重新决定</p></div></div>
+          <ul class="decision-list">
+            <li><strong>礼金选择最高档 22.8 万元</strong><span>我交 2.8 万元现金红包给女方；剩余 20 万元打入一张指定的卡。</span></li>
+            <li><strong>五金预算 7 万–8 万元</strong><span>耳环已购买，价值 7,000 元；除耳环外，其余部分准备另买。</span></li>
+            <li><strong>女方母亲衣服费用就是 2 万元红包</strong><span>不再另外计算女方母亲衣服费用。</span></li>
+            <li><strong>担子由双方分工准备</strong><span>男方只准备 1 万元，担子具体内容由女方家庭准备。</span></li>
+            <li><strong>女方长辈固定 10 位</strong><span>无需记录具体名单，每位准备 1,000 元现金红包即可。</span></li>
+            <li><strong>订婚请帖只做电子版</strong><span>仍需确定文案、照片、发送人和邀请名单。</span></li>
+            <li><strong>喜糖按到场人数准备</strong><span>每人 1 份，在订婚宴用餐时现场发放；建议额外预留约 5%–10%。</span></li>
+            <li><strong>男方提前两天到寿宁</strong><span>住宿晚数和交通方式尚待确定。</span></li>
+            <li><strong>服饰与首饰目标在 10 月中旬前完成</strong><span>涉及五金、双方服装、女方母亲服装和男方戒指。</span></li>
+          </ul>
+        </section>
+
+        <section class="card" id="questions">
+          <div class="section-head"><div><h2>待确认问题</h2><p class="section-note">把这些问题逐一问清，计划就会快速收敛</p></div></div>
+          <ul class="question-list">
+            <li>订婚宴准确日期和时段是什么？寿宁廊桥酒店是否已订，具体厅名和地址是什么？</li>
+            <li>指定卡收款信息是否已核对？20 万元何时打款，2.8 万元现金红包何时交给女方？</li>
+            <li>五金除已购 7,000 元耳环外，其余具体款式和预算分配是什么？</li>
+            <li>3 万宴席款比 10 桌 × 2,000 元多出的约 1 万元包含什么？</li>
+            <li>男方人员、媒人人选、住宿晚数和交通方式是什么？</li>
+            <li>电子请帖由谁制作与发送？文案、照片和名单是否确定？</li>
+            <li>喜糖单份规格、预算、采购人和现场发放人是谁？</li>
+            <li>是否需要摄影摄像、主持、布置、伴手礼、酒水和车辆？</li>
+            <li>当天谁担任双方总协调人和资金保管人？</li>
+          </ul>
+        </section>
+      </main>
+
+      <aside>
+        <nav class="card side-nav" aria-label="页面目录">
+          <div class="aside-title">快速跳转</div>
+          <a href="#priority">现在最先处理</a>
+          <a href="#tasks">完整待办</a>
+          <a href="#budget">款项与预算</a>
+          <a href="#decisions">已经确定</a>
+          <a href="#questions">待确认问题</a>
+        </nav>
+        <section class="card next-step">
+          <h2>下一条信息直接发给我</h2>
+          <p>不用整理格式。日期、金额、聊天截图、人员名单或供应商报价都可以，我会继续归类并更新这里。</p>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <footer><div class="shell">本页根据当前已知资料整理 · 未确认事项均单独标注</div></footer>
+  </div>
+
+  <script>
+    const ACCESS_HASH = '57f2787396a0843ba131c9756af2e4641597f395652ede6eafb3ee5bdf9ec3ec';
+    const accessGate = document.getElementById('access-gate');
+    const protectedContent = document.getElementById('protected-content');
+    const accessForm = document.getElementById('access-form');
+    const accessPassword = document.getElementById('access-password');
+    const accessError = document.getElementById('access-error');
+
+    async function hashPassword(value) {
+      const data = new TextEncoder().encode(value);
+      const digest = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+    }
+
+    function unlockPage() {
+      protectedContent.hidden = false;
+      accessGate.hidden = true;
+      document.body.classList.remove('locked');
+      try { sessionStorage.setItem('engagement-plan-unlocked', '1'); } catch (_) {}
+    }
+
+    try {
+      if (sessionStorage.getItem('engagement-plan-unlocked') === '1') unlockPage();
+    } catch (_) {}
+
+    accessForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      accessError.textContent = '';
+      try {
+        if (await hashPassword(accessPassword.value) === ACCESS_HASH) {
+          accessPassword.value = '';
+          unlockPage();
+        } else {
+          accessError.textContent = '密码不正确，请重新输入。';
+          accessPassword.select();
+        }
+      } catch (_) {
+        accessError.textContent = '当前浏览器无法完成验证，请换用新版浏览器。';
+      }
+    });
+
+    const buttons = document.querySelectorAll('[data-filter]');
+    const rows = document.querySelectorAll('[data-priority]');
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+        buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+        rows.forEach((row) => { row.hidden = filter !== 'all' && row.dataset.priority !== filter; });
+      });
+    });
+  </script>
+</body>
+</html>
